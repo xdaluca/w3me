@@ -9,10 +9,10 @@ export default function Home() {
       <Head />
 
       <main>
-        <HeadingComponent as="h2">Next.js + Ethereum starter kit</HeadingComponent>
-        <Text>Quickly ship Web3 Apps ⚡</Text>
+        <HeadingComponent as="h2">w3me</HeadingComponent>
+        <Text>Your web3 footprint made easy.</Text>
         <Text py={4}>
-          <LinkComponent href="examples">View examples</LinkComponent> to bootstrap development.
+          <LinkComponent href="examples">View pages</LinkComponent>.
         </Text>
       </main>
     </>
