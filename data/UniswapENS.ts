@@ -1,92 +1,83 @@
-import { ethers, BigNumberish } from "ethers";
-import { ChainId, Token, Fetcher, WETH, Route } from "@uniswap/sdk";
-import Decimal from "decimal.js";
-import { chains } from "@/sdk/chains";
-import { HighlightResponse, HighlightRequest, HighlightHandler } from "@/types";
-import { Etherscan } from "@/sdk/etherscan";
-import { formatDistanceToNow, fromUnixTime } from "date-fns";
+import { ethers, BigNumberish } from 'ethers'
+import { ChainId, Token, Fetcher, WETH, Route } from '@uniswap/sdk'
+import Decimal from 'decimal.js'
+import { chains } from '@/sdk/chains'
+import { w3dataResponse, w3dataRequest, w3dataHandler } from '@/types'
+import { Etherscan } from '@/sdk/etherscan'
+import { formatDistanceToNow, fromUnixTime } from 'date-fns'
 
-const chainId = ChainId.MAINNET;
-const ENS = new Token(
-  chainId,
-  "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
-  18
-);
+const chainId = ChainId.MAINNET
+const ENS = new Token(chainId, '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72', 18)
 
 interface EtherscanTransaction {
-  timeStamp: string;
-  from: string;
-  tokenSymbol: string;
+  timeStamp: string
+  from: string
+  tokenSymbol: string
 }
 
 async function getPriceInWETH() {
-  const pair = await Fetcher.fetchPairData(ENS, WETH[ENS.chainId]);
-  const route = new Route([pair], WETH[ENS.chainId]);
-  return route.midPrice.invert().toSignificant(6);
+  const pair = await Fetcher.fetchPairData(ENS, WETH[ENS.chainId])
+  const route = new Route([pair], WETH[ENS.chainId])
+  return route.midPrice.invert().toSignificant(6)
 }
 
-async function getUniswapENS(query: HighlightRequest) {
+async function getUniswapENS(query: w3dataRequest) {
   const balance = await Etherscan.query(
     {
-      module: "account",
-      action: "tokenbalance",
+      module: 'account',
+      action: 'tokenbalance',
       contractAddress: ENS.address,
       address: query.walletAddress,
-      tag: "latest",
+      tag: 'latest',
     },
     1
-  );
+  )
 
-  if (balance === "0") return null;
+  if (balance === '0') return null
 
   const transactions = await Etherscan.query<EtherscanTransaction[]>(
     {
-      module: "account",
-      action: "tokentx",
+      module: 'account',
+      action: 'tokentx',
       contractAddress: ENS.address,
       address: query.walletAddress,
-      tag: "latest",
-      page: "1",
-      startblock: "0",
-      sort: "asc",
+      tag: 'latest',
+      page: '1',
+      startblock: '0',
+      sort: 'asc',
     },
     1
-  );
+  )
 
-  const chain = chains.find((chain) => chain.id === query.chainId);
+  const chain = chains.find((chain) => chain.id === query.chainId)
   if (!chain) {
-    throw new Error("Chain not found");
+    throw new Error('Chain not found')
   }
 
   if (transactions?.length === 0) {
-    throw new Error("No transactions found");
+    throw new Error('No transactions found')
   }
 
-  const tx = transactions[0];
-  const weth = await getPriceInWETH();
+  const tx = transactions[0]
+  const weth = await getPriceInWETH()
 
-  const response: HighlightResponse = {
-    title: "Holder of *$ENS*",
-    metadata: `Joined ${formatDistanceToNow(
-      fromUnixTime(Number.parseInt(tx.timeStamp)),
-      {
-        addSuffix: true,
-      }
-    )}`,
-    icon: "/img/uniswap.png",
-    color: "#FF007A",
-    statistic: `Owns *${new Decimal(
-      ethers.formatEther(balance as BigNumberish)
-    ).toFixed(1)} $${tx.tokenSymbol}* valued at *${new Decimal(weth).toFixed(
-      4
-    )} wETH`,
-  };
-  return response;
+  const response: w3dataResponse = {
+    title: 'Holder of *$ENS*',
+    metadata: `Joined ${formatDistanceToNow(fromUnixTime(Number.parseInt(tx.timeStamp)), {
+      addSuffix: true,
+    })}`,
+    icon: '/img/uniswap.png',
+    color: '#FF007A',
+    statistic: `Owns *${new Decimal(ethers.formatEther(balance as BigNumberish)).toFixed(1)} $${tx.tokenSymbol}* valued at *${new Decimal(
+      weth
+    ).toFixed(4)} wETH`,
+  }
+  return response
 }
 
-const handler: HighlightHandler = {
-  id: "uniswap-ens",
+const handler: w3dataHandler = {
+  id: 'uniswap-ens',
   resolve: getUniswapENS,
-};
+}
 
-export default handler;
+export default handler

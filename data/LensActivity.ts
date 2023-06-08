@@ -1,23 +1,23 @@
-import { HighlightHandler, HighlightRequest, HighlightResponse } from "@/types";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { gql } from "@apollo/client";
-import { formatDistanceToNow } from "date-fns";
+import { w3dataHandler, w3dataRequest, w3dataResponse } from '@/types'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { formatDistanceToNow } from 'date-fns'
 
 const apolloClient = new ApolloClient({
-  uri: "https://api.lens.dev/",
+  uri: 'https://api.lens.dev/',
   cache: new InMemoryCache(),
-});
+})
 
-async function getLensActivity(query: HighlightRequest) {
+async function getLensActivity(query: w3dataRequest) {
   var _response = await apolloClient.query({
     query: gql(`query DefaultProfile {
       defaultProfile(request: { ethereumAddress: "${query.walletAddress}"}) {
         id
       }
     }`),
-  });
-  const profileId = _response?.data?.defaultProfile?.id;
-  if (!profileId) return null;
+  })
+  const profileId = _response?.data?.defaultProfile?.id
+  if (!profileId) return null
 
   _response = await apolloClient.query({
     query: gql(`query Profile {
@@ -27,10 +27,10 @@ async function getLensActivity(query: HighlightRequest) {
         }
       }
     }`),
-  });
+  })
 
-  const totalPublications = _response?.data?.profile?.stats?.totalPublications;
-  if (!totalPublications || totalPublications == 0) return null;
+  const totalPublications = _response?.data?.profile?.stats?.totalPublications
+  if (!totalPublications || totalPublications == 0) return null
 
   _response = await apolloClient.query({
     query: gql(`query Publications {
@@ -387,29 +387,28 @@ async function getLensActivity(query: HighlightRequest) {
     }
     
     `),
-  });
+  })
 
-  const latestPublicationCreatedAt =
-    _response?.data?.publications?.items?.[0]?.createdAt;
-  if (!latestPublicationCreatedAt) return null;
+  const latestPublicationCreatedAt = _response?.data?.publications?.items?.[0]?.createdAt
+  if (!latestPublicationCreatedAt) return null
 
-  const createdAt = Date.parse(latestPublicationCreatedAt);
+  const createdAt = Date.parse(latestPublicationCreatedAt)
 
-  const response: HighlightResponse = {
+  const response: w3dataResponse = {
     title: `Active on Lens`,
     metadata: `Latest ${formatDistanceToNow(createdAt, {
       addSuffix: true,
     })}`,
-    icon: "/img/lens.png",
-    color: "#216435",
+    icon: '/img/lens.png',
+    color: '#216435',
     statistic: `Published *${totalPublications}* publications`,
-  };
-  return response;
+  }
+  return response
 }
 
-const handler: HighlightHandler = {
-  id: "lens-activity",
+const handler: w3dataHandler = {
+  id: 'lens-activity',
   resolve: getLensActivity,
-};
+}
 
-export default handler;
+export default handler
