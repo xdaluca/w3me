@@ -29,6 +29,7 @@
     "@emotion/styled": "^11",
     "@lens-protocol/react-web": "^1.1.0",
     "@next/font": "13.1.1",
+    "@uniswap/sdk": "^3.0.3",
     "@web3modal/ethereum": "^2.4.1",
     "@web3modal/react": "^2.4.1",
     "dayjs": "^1.11.7",

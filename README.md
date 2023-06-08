@@ -4,6 +4,7 @@ Web3 stack added to template:
 - Airstack SDK
 - Lens SDK 
 - ethers.js
+- uniswap sdk
 
 
 ----- Template Boilerplate -----
