@@ -1,3 +1,13 @@
+w3me makes it easy for anyone to see their on-chain footprint. It's a simple web app that allows you to connect your wallet and see your on-chain footprint. It's built with Next.js, Tailwind CSS, and a multitude of API providers.
+
+Web3 stack added to template:
+- Airstack SDK (downlod)
+- Lens SDK (download)
+- ethers.js (download)
+
+
+----- Template Boilerplate -----
+
 # Nexth
 
 A Next.js + Ethereum starter kit to quickly ship Web3 Apps ⚡
