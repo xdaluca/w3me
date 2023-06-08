@@ -11,8 +11,8 @@ export const THEME_CONFIG = {
   initialColorMode: THEME_INITIAL_COLOR,
 }
 
-export const SOCIAL_TWITTER = '_daluca'
-export const SOCIAL_GITHUB = 'xdalca'
+export const SOCIAL_TWITTER = 'daluca_'
+export const SOCIAL_GITHUB = 'xdaluca'
 
 export const ETH_CHAINS = [mainnet, sepolia, polygon, optimism, arbitrum]
 
